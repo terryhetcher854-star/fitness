@@ -1,0 +1,159 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b1714">
+<link rel="manifest" href="manifest.json">
+<title>GymSaathi</title>
+<style>
+body{margin:0;padding:18px;background:#0b1714;color:white;font-family:Arial,sans-serif;max-width:750px;margin:auto}
+.panel{background:#13231e;padding:16px;border-radius:14px;margin:15px 0}
+input,select{width:100%;padding:12px;margin:6px 0;background:#0d1a15;color:white;border:1px solid #426451;border-radius:9px;box-sizing:border-box}
+button{padding:12px;border:0;border-radius:9px;background:#7de0a4;color:#092015;font-weight:bold;margin:5px;cursor:pointer}
+.exercise{background:#0e1b16;padding:12px;border-radius:10px;margin:10px 0}
+.set{display:grid;grid-template-columns:1fr 1fr 35px;gap:7px}
+.record{padding:12px;border-bottom:1px solid #426451}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<h1>🏋️ GymSaathi</h1>
+<p>Personal Workout Tracker</p>
+
+<div class="panel">
+<button onclick="show('log')">Log Workout</button>
+<button onclick="show('history')">History</button>
+</div>
+
+<section id="log">
+<div class="panel">
+<label>Date</label>
+<input type="date" id="date">
+
+<label>Muscle Group</label>
+<select id="muscle">
+<option>Biceps</option><option>Triceps</option>
+<option>Chest</option><option>Back</option>
+<option>Shoulders</option><option>Legs</option>
+</select>
+
+<label>Workout Title</label>
+<input id="title" placeholder="Biceps Day">
+
+<div id="exercises"></div>
+
+<button onclick="addExercise()">+ Add Exercise</button>
+<button onclick="saveWorkout()">SAVE WORKOUT</button>
+</div>
+</section>
+
+<section id="history" class="hidden">
+<div class="panel">
+<h2>Workout History</h2>
+<div id="records"></div>
+</div>
+</section>
+
+<script>
+const KEY="gymsaathi_records";
+let workouts=[];
+let count=0;
+
+function load(){
+try{workouts=JSON.parse(localStorage.getItem(KEY)||"[]")}
+catch(e){workouts=[]}
+}
+
+function persist(){
+try{
+localStorage.setItem(KEY,JSON.stringify(workouts));
+return true;
+}catch(e){
+alert("Browser storage unavailable");
+return false;
+}
+}
+
+function addExercise(){
+count++;
+let div=document.createElement("div");
+div.className="exercise";
+div.innerHTML=`
+<h3>Exercise ${count}</h3>
+<input class="ename" placeholder="Exercise name e.g. Hammer Curl">
+<div class="sets"></div>
+<button onclick="addSet(this)">+ Add Set</button>`;
+document.getElementById("exercises").appendChild(div);
+addSet(div.querySelector("button"));
+}
+
+function addSet(btn){
+let host=btn.closest(".exercise").querySelector(".sets");
+let row=document.createElement("div");
+row.className="set";
+row.innerHTML=`
+<input type="number" class="weight" placeholder="Weight kg">
+<input type="number" class="reps" placeholder="Reps">
+<button onclick="this.parentElement.remove()">X</button>`;
+host.appendChild(row);
+}
+
+function saveWorkout(){
+let exercises=[...document.querySelectorAll(".exercise")].map(e=>({
+name:e.querySelector(".ename").value.trim(),
+sets:[...e.querySelectorAll(".set")].map(s=>({
+weight:s.querySelector(".weight").value,
+reps:s.querySelector(".reps").value
+})).filter(s=>s.weight||s.reps)
+})).filter(e=>e.name);
+
+if(!exercises.length){
+alert("Exercise name add kijiye");
+return;
+}
+
+let workout={
+id:Date.now(),
+date:document.getElementById("date").value,
+muscle:document.getElementById("muscle").value,
+title:document.getElementById("title").value,
+exercises
+};
+
+workouts.unshift(workout);
+if(persist()){
+alert("Workout Saved Successfully!");
+document.getElementById("exercises").innerHTML="";
+count=0;
+addExercise();
+render();
+}
+}
+
+function render(){
+let html="";
+workouts.forEach(w=>{
+html+=`<div class="record">
+<b>${w.title||w.muscle}</b><br>${w.date}<br>
+${w.exercises.map(e=>`
+<p>${e.name}: ${e.sets.map(s=>s.weight+" kg × "+s.reps+" reps").join(", ")}</p>
+`).join("")}
+</div>`;
+});
+document.getElementById("records").innerHTML=html||"No workouts saved yet";
+}
+
+function show(id){
+document.getElementById("log").classList.toggle("hidden",id!=="log");
+document.getElementById("history").classList.toggle("hidden",id!=="history");
+render();
+}
+
+document.getElementById("date").value=new Date().toISOString().slice(0,10);
+load();
+addExercise();
+</script>
+</body>
+</html>
