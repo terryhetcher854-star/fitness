@@ -5,83 +5,90 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#0b1714">
-<meta name="description" content="GymSaathi personal workout tracker">
 <link rel="manifest" href="./manifest.json">
-<link rel="icon" href="./icon-192.png">
-<title>GymSaathi - Workout Tracker</title>
+<title>GymSaathi</title>
 
 <style>
 *{box-sizing:border-box}
-body{
- margin:0;padding:18px;background:#0b1714;color:#f1f7f3;
- font-family:Arial,sans-serif;max-width:850px;margin:auto
-}
-h1{font-size:30px;margin-bottom:5px}
-.sub{color:#a7b9af}
-.panel{
- background:#13231e;border:1px solid #294239;
- padding:16px;border-radius:15px;margin:16px 0
-}
-label{display:block;color:#a7b9af;margin:12px 0 6px;font-size:13px}
-input,select,textarea{
- width:100%;padding:12px;background:#0d1a15;color:white;
- border:1px solid #426451;border-radius:9px;font-size:15px
-}
-button{
- padding:12px 15px;border:0;border-radius:9px;
- background:#7de0a4;color:#092015;font-weight:bold;
- margin:5px 3px;cursor:pointer
-}
+body{margin:0;padding:16px;background:#0b1714;color:#f1f7f3;font-family:Arial,sans-serif;max-width:850px;margin:auto}
+h1{color:#7de0a4}
+.panel{background:#13231e;border:1px solid #294239;padding:16px;border-radius:15px;margin:15px 0}
+input,select,textarea{width:100%;padding:12px;margin:6px 0;background:#0d1a15;color:white;border:1px solid #426451;border-radius:9px}
+label{display:block;color:#a7b9af;margin-top:12px;font-size:13px}
+button{padding:12px 15px;border:0;border-radius:9px;background:#7de0a4;color:#092015;font-weight:bold;margin:5px 3px;cursor:pointer}
 .secondary{background:#254334;color:white}
 .danger{background:#562c2c;color:white}
-.primary{width:100%;padding:15px;font-size:16px;margin-top:15px}
+.primary{width:100%;padding:15px;margin-top:15px}
+.hidden{display:none!important}
 .tabs{display:flex;gap:8px}
 .tabs button{flex:1}
 .active{background:#376b4b;color:white}
-.exercise{
- background:#0e1b16;border:1px solid #294239;
- padding:13px;border-radius:12px;margin:12px 0
-}
-.set{
- display:grid;grid-template-columns:30px 1fr 1fr 35px;
- gap:6px;align-items:center;margin:8px 0
-}
-.set input{padding:10px;min-width:0}
-.record{
- padding:13px;margin:10px 0;
- border:1px solid #294239;border-radius:10px
-}
-.record li{margin:8px 0}
+.exercise,.record{background:#0e1b16;border:1px solid #294239;padding:13px;border-radius:12px;margin:12px 0}
+.set{display:grid;grid-template-columns:30px 1fr 1fr 35px;gap:6px;align-items:center;margin:8px 0}
+.set input{min-width:0}
 .muted{color:#a7b9af;font-size:12px}
-.hidden{display:none!important}
-@media(max-width:450px){
- body{padding:12px}
- h1{font-size:26px}
- .panel{padding:12px}
-}
+#message{padding:12px;border-radius:9px;background:#20392d;margin:10px 0;display:none}
+#userBar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
 </style>
 </head>
 
 <body>
-
 <header>
 <h1>🏋️ GymSaathi</h1>
-<div class="sub">Your Personal Workout Tracker</div>
+<p class="muted">Your personal fitness companion</p>
 </header>
+
+<div id="message"></div>
+
+<!-- AUTH SCREEN -->
+<section id="authSection" class="panel">
+<h2>Welcome to GymSaathi</h2>
+<div class="tabs">
+<button id="loginTab" class="active">Login</button>
+<button id="signupTab">Create Account</button>
+</div>
+
+<div id="loginForm">
+<label>Email</label>
+<input type="email" id="loginEmail" placeholder="Your email">
+<label>Password</label>
+<input type="password" id="loginPassword" placeholder="Password">
+<button class="primary" id="loginButton">Login</button>
+<button class="secondary" id="forgotButton">Forgot Password?</button>
+</div>
+
+<div id="signupForm" class="hidden">
+<label>Full Name</label>
+<input id="signupName" placeholder="Your name">
+<label>Email</label>
+<input type="email" id="signupEmail" placeholder="Your email">
+<label>Password</label>
+<input type="password" id="signupPassword" placeholder="At least 6 characters">
+<button class="primary" id="signupButton">Create Account</button>
+<p class="muted">Email verification may be required before your first login.</p>
+</div>
+</section>
+
+<!-- MAIN APP -->
+<section id="appSection" class="hidden">
+<div class="panel" id="userBar">
+<div>
+<strong id="userEmail"></strong>
+<div class="muted">Your private workout account</div>
+</div>
+<button class="danger" id="logoutButton">Logout</button>
+</div>
 
 <div class="panel">
 <div class="tabs">
 <button id="logTab" class="active">Log Workout</button>
 <button id="historyTab">History</button>
-<button id="progressTab">Progress</button>
 </div>
 </div>
 
 <section id="logSection">
-
 <div class="panel">
 <h2>Today's Workout</h2>
-
 <label>Date</label>
 <input type="date" id="workoutDate">
 
@@ -104,361 +111,493 @@ button{
 
 <h3>Exercises</h3>
 <div id="exerciseList"></div>
-
 <button class="secondary" id="addExercise">+ Add Exercise</button>
 
-<label>Workout Notes</label>
-<textarea id="notes" rows="3" placeholder="How was today's workout?"></textarea>
+<label>Notes</label>
+<textarea id="notes" rows="3" placeholder="Workout notes"></textarea>
 
 <button class="primary" id="saveWorkout">SAVE WORKOUT</button>
-
-<p class="muted">
-Example: Dumbbell Curl - 7.5 kg × 12 reps.
-Add each set separately.
-</p>
 </div>
 </section>
 
 <section id="historySection" class="hidden">
 <div class="panel">
-<h2>Workout History</h2>
+<h2>Your Workout History</h2>
+<button class="secondary" id="refreshHistory">Refresh</button>
 <div id="historyList"></div>
 </div>
 </section>
-
-<section id="progressSection" class="hidden">
-<div class="panel">
-<h2>Progress Tracker</h2>
-<label>Exercise Name</label>
-<input id="progressSearch" placeholder="Example: Dumbbell Curl">
-<div id="progressResult" class="muted"></div>
-</div>
-<div class="panel">
-<h3>Data Backup</h3>
-<button id="backupButton">Download Backup</button>
-<label>Restore Backup</label>
-<input type="file" id="restoreFile" accept=".json">
-</div>
 </section>
+
+<!-- Supabase JS library -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
 "use strict";
 
-const KEY = "gymsaathi_workouts_v3";
+/* SUPABASE CONFIGURATION */
+const SUPABASE_URL = "https://avpdxeetptsbddikfukp.supabase.co";
+const SUPABASE_KEY = "sb_publishable_AEJrXq9apH6C5aDcdHZMsw_Rl1PVwgt";
+
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
 
 const $ = id => document.getElementById(id);
-
-let workouts = [];
+let currentUser = null;
 let exerciseCount = 0;
 
+function message(text){
+  $("message").textContent = text;
+  $("message").style.display = "block";
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function clearMessage(){
+  $("message").style.display = "none";
+}
+
 function todayDate(){
- const d = new Date();
- const month = String(d.getMonth()+1).padStart(2,"0");
- const day = String(d.getDate()).padStart(2,"0");
- return `${d.getFullYear()}-${month}-${day}`;
+  const d = new Date();
+  return [
+    d.getFullYear(),
+    String(d.getMonth()+1).padStart(2,"0"),
+    String(d.getDate()).padStart(2,"0")
+  ].join("-");
 }
 
 $("workoutDate").value = todayDate();
 
-function loadData(){
- try{
-  const saved = localStorage.getItem(KEY);
-  workouts = saved ? JSON.parse(saved) : [];
-  if(!Array.isArray(workouts)) workouts=[];
- }catch(e){
-  workouts=[];
- }
+function showLogin(){
+  $("loginForm").classList.remove("hidden");
+  $("signupForm").classList.add("hidden");
+  $("loginTab").classList.add("active");
+  $("signupTab").classList.remove("active");
 }
 
-function saveData(){
- try{
-  localStorage.setItem(KEY,JSON.stringify(workouts));
-  return true;
- }catch(e){
-  alert("Storage error! Browser storage allow karein.");
-  return false;
- }
+function showSignup(){
+  $("signupForm").classList.remove("hidden");
+  $("loginForm").classList.add("hidden");
+  $("signupTab").classList.add("active");
+  $("loginTab").classList.remove("active");
 }
 
-function escapeHTML(value){
- return String(value ?? "").replace(/[&<>"']/g, char => ({
-  "&":"&amp;",
-  "<":"&lt;",
-  ">":"&gt;",
-  '"':"&quot;",
-  "'":"&#39;"
- })[char]);
+function showApp(user){
+  currentUser = user;
+  $("authSection").classList.add("hidden");
+  $("appSection").classList.remove("hidden");
+  $("userEmail").textContent = user.email || "GymSaathi User";
+  clearMessage();
+  createProfile();
+  loadHistory();
 }
 
-function addSet(container){
- const number = container.querySelectorAll(".set").length+1;
+function showAuth(){
+  currentUser = null;
+  $("appSection").classList.add("hidden");
+  $("authSection").classList.remove("hidden");
+  showLogin();
+}
 
- const row = document.createElement("div");
- row.className="set";
+async function createProfile(){
+  if(!currentUser) return;
 
- row.innerHTML=`
- <span class="muted">${number}</span>
- <input type="number" min="0" step="0.25"
- class="weight" placeholder="Weight kg">
- <input type="number" min="0" step="1"
- class="reps" placeholder="Reps">
- <button type="button" class="danger removeSet">×</button>
- `;
+  const {error} = await supabaseClient
+    .from("profiles")
+    .upsert({
+      id:currentUser.id,
+      full_name:currentUser.user_metadata?.full_name || ""
+    });
 
- row.querySelector(".removeSet").addEventListener("click",()=>{
-  row.remove();
-  [...container.querySelectorAll(".set")].forEach((r,i)=>{
-   r.firstElementChild.textContent=i+1;
+  if(error) console.error("Profile:",error.message);
+}
+
+/* SIGN UP */
+$("signupButton").addEventListener("click",async()=>{
+  clearMessage();
+
+  const name = $("signupName").value.trim();
+  const email = $("signupEmail").value.trim();
+  const password = $("signupPassword").value;
+
+  if(!name || !email || password.length < 6){
+    message("Name, valid email aur kam se kam 6 character password bhariye.");
+    return;
+  }
+
+  $("signupButton").disabled = true;
+  $("signupButton").textContent = "Creating account...";
+
+  try{
+    const {data,error} = await supabaseClient.auth.signUp({
+      email,
+      password,
+      options:{
+        data:{full_name:name},
+        emailRedirectTo:window.location.origin + window.location.pathname
+      }
+    });
+
+    if(error) throw error;
+
+    if(data.session){
+      showApp(data.session.user);
+      message("Account successfully created!");
+    }else{
+      message("Registration successful! Apna email inbox check kijiye aur verification link par click kijiye. Uske baad login karein.");
+    }
+  }catch(error){
+    message("Registration error: " + error.message);
+  }finally{
+    $("signupButton").disabled = false;
+    $("signupButton").textContent = "Create Account";
+  }
+});
+
+/* LOGIN */
+$("loginButton").addEventListener("click",async()=>{
+  clearMessage();
+
+  const email = $("loginEmail").value.trim();
+  const password = $("loginPassword").value;
+
+  if(!email || !password){
+    message("Email aur password bhariye.");
+    return;
+  }
+
+  $("loginButton").disabled = true;
+  $("loginButton").textContent = "Logging in...";
+
+  try{
+    const {data,error} = await supabaseClient.auth.signInWithPassword({
+      email,password
+    });
+
+    if(error) throw error;
+
+    showApp(data.user);
+    message("Welcome to GymSaathi!");
+  }catch(error){
+    message("Login error: " + error.message);
+  }finally{
+    $("loginButton").disabled = false;
+    $("loginButton").textContent = "Login";
+  }
+});
+
+/* FORGOT PASSWORD */
+$("forgotButton").addEventListener("click",async()=>{
+  const email = $("loginEmail").value.trim();
+
+  if(!email){
+    message("Pehle email address bhariye.");
+    return;
+  }
+
+  const {error} = await supabaseClient.auth.resetPasswordForEmail(email,{
+    redirectTo:window.location.origin + window.location.pathname
   });
- });
 
- container.appendChild(row);
+  if(error) message(error.message);
+  else message("Password reset link aapke email par bhej diya gaya hai.");
+});
+
+/* LOGOUT */
+$("logoutButton").addEventListener("click",async()=>{
+  const {error} = await supabaseClient.auth.signOut();
+
+  if(error){
+    message(error.message);
+    return;
+  }
+
+  showAuth();
+  message("You have logged out.");
+});
+
+/* EXERCISE INPUT */
+function addSet(container){
+  const number = container.querySelectorAll(".set").length + 1;
+  const row = document.createElement("div");
+  row.className = "set";
+
+  row.innerHTML = `
+    <span class="muted">${number}</span>
+    <input type="number" min="0" step="0.25" class="weight" placeholder="Weight kg">
+    <input type="number" min="0" step="1" class="reps" placeholder="Reps">
+    <button type="button" class="danger removeSet">×</button>
+  `;
+
+  row.querySelector(".removeSet").addEventListener("click",()=>{
+    row.remove();
+    [...container.querySelectorAll(".set")].forEach((r,i)=>{
+      r.firstElementChild.textContent = i+1;
+    });
+  });
+
+  container.appendChild(row);
 }
 
 function addExercise(){
- exerciseCount++;
+  exerciseCount++;
 
- const card=document.createElement("div");
- card.className="exercise";
+  const card = document.createElement("div");
+  card.className = "exercise";
 
- card.innerHTML=`
- <h3>Exercise ${exerciseCount}</h3>
- <label>Exercise Name</label>
- <input class="exerciseName" placeholder="Example: Hammer Curl">
- <div class="sets"></div>
- <button type="button" class="secondary addSet">+ Add Set</button>
- <button type="button" class="danger removeExercise">Remove</button>
- `;
+  card.innerHTML = `
+    <h3>Exercise ${exerciseCount}</h3>
+    <label>Exercise Name</label>
+    <input class="exerciseName" placeholder="Example: Dumbbell Curl">
+    <div class="sets"></div>
+    <button type="button" class="secondary addSet">+ Add Set</button>
+    <button type="button" class="danger removeExercise">Remove</button>
+  `;
 
- const sets=card.querySelector(".sets");
+  const sets = card.querySelector(".sets");
 
- card.querySelector(".addSet").addEventListener("click",()=>{
+  card.querySelector(".addSet").addEventListener("click",()=>{
+    addSet(sets);
+  });
+
+  card.querySelector(".removeExercise").addEventListener("click",()=>{
+    card.remove();
+  });
+
   addSet(sets);
- });
-
- card.querySelector(".removeExercise").addEventListener("click",()=>{
-  card.remove();
- });
-
- addSet(sets);
- $("exerciseList").appendChild(card);
+  $("exerciseList").appendChild(card);
 }
 
 function collectExercises(){
- return [...document.querySelectorAll(".exercise")].map(card=>({
-  name:card.querySelector(".exerciseName").value.trim(),
-  sets:[...card.querySelectorAll(".set")].map(row=>({
-   weight:row.querySelector(".weight").value,
-   reps:row.querySelector(".reps").value
-  })).filter(set=>set.weight!=="" || set.reps!=="")
- })).filter(ex=>ex.name);
+  return [...document.querySelectorAll(".exercise")].map(card=>({
+    name:card.querySelector(".exerciseName").value.trim(),
+    sets:[...card.querySelectorAll(".set")].map(row=>({
+      weight:row.querySelector(".weight").value,
+      reps:row.querySelector(".reps").value
+    })).filter(s=>s.weight!=="" || s.reps!=="")
+  })).filter(e=>e.name);
 }
 
-function saveWorkout(){
- const exercises=collectExercises();
+/* SAVE WORKOUT TO CLOUD */
+async function saveWorkout(){
+  if(!currentUser){
+    message("Please login first.");
+    return;
+  }
 
- if(!$("workoutDate").value){
-  alert("Date select kijiye.");
-  return;
- }
+  const exercises = collectExercises();
 
- if(!exercises.length){
-  alert("Exercise ka naam add kijiye.");
-  return;
- }
+  if(!exercises.length){
+    message("Exercise ka naam add kijiye.");
+    return;
+  }
 
- if(exercises.some(ex=>!ex.sets.length)){
-  alert("Har exercise mein kam se kam ek set ka weight ya reps bhariye.");
-  return;
- }
+  if(exercises.some(e=>!e.sets.length)){
+    message("Har exercise mein weight ya reps bhariye.");
+    return;
+  }
 
- const workout={
-  id:Date.now().toString()+"-"+Math.random().toString(36).slice(2),
-  date:$("workoutDate").value,
-  muscle:$("muscle").value,
-  title:$("workoutTitle").value.trim(),
-  notes:$("notes").value.trim(),
-  exercises:exercises
- };
+  $("saveWorkout").disabled = true;
+  $("saveWorkout").textContent = "Saving...";
 
- workouts.unshift(workout);
+  try{
+    const {data:workout,error:workoutError} = await supabaseClient
+      .from("workouts")
+      .insert({
+        user_id:currentUser.id,
+        workout_date:$("workoutDate").value,
+        muscle_group:$("muscle").value,
+        title:$("workoutTitle").value.trim(),
+        notes:$("notes").value.trim()
+      })
+      .select()
+      .single();
 
- if(saveData()){
-  alert("Workout successfully saved!");
-  $("workoutTitle").value="";
-  $("notes").value="";
-  $("exerciseList").innerHTML="";
-  exerciseCount=0;
-  addExercise();
- }
+    if(workoutError) throw workoutError;
+
+    for(const exercise of exercises){
+      const {data:exerciseRow,error:exerciseError} = await supabaseClient
+        .from("exercises")
+        .insert({
+          workout_id:workout.id,
+          user_id:currentUser.id,
+          exercise_name:exercise.name
+        })
+        .select()
+        .single();
+
+      if(exerciseError) throw exerciseError;
+
+      const setRows = exercise.sets.map((set,index)=>({
+        exercise_id:exerciseRow.id,
+        user_id:currentUser.id,
+        set_number:index+1,
+        weight_kg:set.weight===""?null:Number(set.weight),
+        reps:set.reps===""?null:Number(set.reps)
+      }));
+
+      const {error:setError} = await supabaseClient
+        .from("workout_sets")
+        .insert(setRows);
+
+      if(setError) throw setError;
+    }
+
+    message("Workout successfully saved to your account!");
+
+    $("workoutTitle").value="";
+    $("notes").value="";
+    $("exerciseList").innerHTML="";
+    exerciseCount=0;
+    addExercise();
+
+    await loadHistory();
+
+  }catch(error){
+    message("Save error: " + error.message);
+  }finally{
+    $("saveWorkout").disabled = false;
+    $("saveWorkout").textContent = "SAVE WORKOUT";
+  }
 }
 
-function showSection(name){
- $("logSection").classList.toggle("hidden",name!=="log");
- $("historySection").classList.toggle("hidden",name!=="history");
- $("progressSection").classList.toggle("hidden",name!=="progress");
+/* LOAD HISTORY */
+async function loadHistory(){
+  if(!currentUser) return;
 
- $("logTab").classList.toggle("active",name==="log");
- $("historyTab").classList.toggle("active",name==="history");
- $("progressTab").classList.toggle("active",name==="progress");
+  const host = $("historyList");
+  host.textContent = "Loading workouts...";
 
- if(name==="history") renderHistory();
- if(name==="progress") renderProgress();
+  try{
+    const {data:workouts,error} = await supabaseClient
+      .from("workouts")
+      .select("*")
+      .eq("user_id",currentUser.id)
+      .order("workout_date",{ascending:false});
+
+    if(error) throw error;
+
+    host.innerHTML="";
+
+    if(!workouts.length){
+      host.textContent="Abhi koi workout saved nahi hai.";
+      return;
+    }
+
+    for(const workout of workouts){
+      const {data:exercises,error:exerciseError} = await supabaseClient
+        .from("exercises")
+        .select("*")
+        .eq("workout_id",workout.id)
+        .eq("user_id",currentUser.id);
+
+      if(exerciseError) throw exerciseError;
+
+      const card = document.createElement("div");
+      card.className="record";
+
+      const heading = document.createElement("h3");
+      heading.textContent=workout.title || workout.muscle_group;
+      card.appendChild(heading);
+
+      const date = document.createElement("p");
+      date.className="muted";
+      date.textContent=workout.workout_date+" · "+workout.muscle_group;
+      card.appendChild(date);
+
+      for(const exercise of exercises){
+        const {data:sets,error:setError} = await supabaseClient
+          .from("workout_sets")
+          .select("*")
+          .eq("exercise_id",exercise.id)
+          .eq("user_id",currentUser.id)
+          .order("set_number");
+
+        if(setError) throw setError;
+
+        const p=document.createElement("p");
+        p.textContent=exercise.exercise_name+": "+sets.map(s=>
+          (s.weight_kg ?? "—")+" kg × "+(s.reps ?? "—")+" reps"
+        ).join(" | ");
+        card.appendChild(p);
+      }
+
+      if(workout.notes){
+        const note=document.createElement("p");
+        note.className="muted";
+        note.textContent=workout.notes;
+        card.appendChild(note);
+      }
+
+      host.appendChild(card);
+    }
+
+  }catch(error){
+    host.textContent="History error: "+error.message;
+  }
 }
 
-function formatDate(date){
- const d=new Date(date+"T12:00:00");
- return d.toLocaleDateString("en-IN",{
-  day:"numeric",month:"short",year:"numeric"
- });
-}
-
-function renderHistory(){
- const host=$("historyList");
- host.innerHTML="";
-
- if(!workouts.length){
-  host.textContent="No workouts saved yet.";
-  return;
- }
-
- workouts.forEach(workout=>{
-  const card=document.createElement("div");
-  card.className="record";
-
-  const exerciseHTML=workout.exercises.map(ex=>`
-   <li>
-    <b>${escapeHTML(ex.name)}</b><br>
-    ${ex.sets.map(set=>
-     `${escapeHTML(set.weight || "—")} kg × ${escapeHTML(set.reps || "—")} reps`
-    ).join(" | ")}
-   </li>
-  `).join("");
-
-  card.innerHTML=`
-   <h3>${escapeHTML(workout.title || workout.muscle)}</h3>
-   <div class="muted">${formatDate(workout.date)} · ${escapeHTML(workout.muscle)}</div>
-   <ul>${exerciseHTML}</ul>
-   ${workout.notes ? `<p class="muted">${escapeHTML(workout.notes)}</p>` : ""}
-   <button class="danger deleteWorkout">Delete</button>
-  `;
-
-  card.querySelector(".deleteWorkout").addEventListener("click",()=>{
-   if(confirm("Delete this workout?")){
-    workouts=workouts.filter(w=>w.id!==workout.id);
-    if(saveData()) renderHistory();
-   }
-  });
-
-  host.appendChild(card);
- });
-}
-
-function renderProgress(){
- const query=$("progressSearch").value.trim().toLowerCase();
- const host=$("progressResult");
-
- if(!query){
-  host.textContent="Exercise name type kijiye.";
-  return;
- }
-
- const records=[];
-
- workouts.forEach(workout=>{
-  workout.exercises.forEach(ex=>{
-   if(ex.name.toLowerCase()===query){
-    ex.sets.forEach(set=>{
-     if(set.weight!==""){
-      records.push({
-       date:workout.date,
-       weight:Number(set.weight),
-       reps:set.reps
-      });
-     }
-    });
-   }
-  });
- });
-
- records.sort((a,b)=>a.date.localeCompare(b.date));
-
- if(!records.length){
-  host.textContent="Is exercise ka record nahi mila.";
-  return;
- }
-
- const maximum=Math.max(...records.map(r=>r.weight));
-
- host.innerHTML=`
- <h3>Heaviest Weight: ${maximum} kg</h3>
- <p>${records.length} recorded sets</p>
- `;
-
- records.slice().reverse().forEach(record=>{
-  const p=document.createElement("p");
-  p.textContent=`${formatDate(record.date)} — ${record.weight} kg × ${record.reps || "—"} reps`;
-  host.appendChild(p);
- });
-}
-
+/* TABS */
 $("addExercise").addEventListener("click",addExercise);
 $("saveWorkout").addEventListener("click",saveWorkout);
 
-$("logTab").addEventListener("click",()=>showSection("log"));
-$("historyTab").addEventListener("click",()=>showSection("history"));
-$("progressTab").addEventListener("click",()=>showSection("progress"));
-
-$("progressSearch").addEventListener("input",renderProgress);
-
-$("backupButton").addEventListener("click",()=>{
- const blob=new Blob(
-  [JSON.stringify({workouts},null,2)],
-  {type:"application/json"}
- );
- const url=URL.createObjectURL(blob);
- const a=document.createElement("a");
- a.href=url;
- a.download="gymsaathi-backup.json";
- a.click();
- URL.revokeObjectURL(url);
+$("logTab").addEventListener("click",()=>{
+  $("logSection").classList.remove("hidden");
+  $("historySection").classList.add("hidden");
+  $("logTab").classList.add("active");
+  $("historyTab").classList.remove("active");
 });
 
-$("restoreFile").addEventListener("change",async event=>{
- const file=event.target.files[0];
- if(!file)return;
+$("historyTab").addEventListener("click",()=>{
+  $("historySection").classList.remove("hidden");
+  $("logSection").classList.add("hidden");
+  $("historyTab").classList.add("active");
+  $("logTab").classList.remove("active");
+  loadHistory();
+});
 
- try{
-  const backup=JSON.parse(await file.text());
-  const incoming=Array.isArray(backup)?backup:backup.workouts;
+$("refreshHistory").addEventListener("click",loadHistory);
 
-  if(!Array.isArray(incoming)) throw new Error("Invalid backup");
+$("loginTab").addEventListener("click",showLogin);
+$("signupTab").addEventListener("click",showSignup);
 
-  if(confirm("Backup records restore karne hain?")){
-   workouts=incoming.concat(workouts);
-   if(saveData()){
-    alert("Backup restored successfully!");
-    renderHistory();
-   }
+/* RESTORE SESSION */
+async function initializeApp(){
+  const {data,error} = await supabaseClient.auth.getSession();
+
+  if(error){
+    message(error.message);
+    return;
   }
- }catch(error){
-  alert("Invalid backup file.");
- }
 
- event.target.value="";
+  if(data.session){
+    showApp(data.session.user);
+  }else{
+    showAuth();
+  }
+}
+
+supabaseClient.auth.onAuthStateChange((event,session)=>{
+  if(event==="SIGNED_IN" && session){
+    showApp(session.user);
+  }
+
+  if(event==="SIGNED_OUT"){
+    showAuth();
+  }
 });
 
-loadData();
 addExercise();
+initializeApp();
 
+/* PWA SERVICE WORKER */
 if("serviceWorker" in navigator){
- window.addEventListener("load",()=>{
-  navigator.serviceWorker.register("./sw.js")
-   .then(()=>console.log("GymSaathi offline support ready"))
-   .catch(error=>console.error("Service Worker:",error));
- });
+  window.addEventListener("load",()=>{
+    navigator.serviceWorker.register("./sw.js")
+      .catch(error=>console.log("PWA:",error));
+  });
 }
 </script>
-
 </body>
 </html>
